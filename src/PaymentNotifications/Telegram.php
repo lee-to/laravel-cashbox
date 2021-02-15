@@ -1,8 +1,8 @@
 <?php
 
-namespace App\CashBox\PaymentNotifications;
+namespace Leeto\CashBox\PaymentNotifications;
 
-use App\CashBox\PaymentNotificationInterface;
+use Leeto\CashBox\PaymentNotificationInterface;
 
 use TelegramBot\Api\BotApi;
 

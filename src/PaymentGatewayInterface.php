@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\CashBox;
+namespace Leeto\CashBox;
 
 
 /**

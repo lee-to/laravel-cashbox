@@ -1,11 +1,11 @@
 <?php
 
-namespace App\CashBox;
+namespace Leeto\CashBox;
 
 
 /**
  * Class CashBox
- * @package App\CashBox
+ * @package Leeto\CashBox
  */
 class CashBox
 {

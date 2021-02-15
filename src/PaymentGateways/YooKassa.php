@@ -1,9 +1,10 @@
 <?php
 
-namespace App\CashBox\PaymentGateways;
+namespace Leeto\CashBox\PaymentGateways;
 
-use App\CashBox\Exceptions\PaymentNotificationException;
-use App\CashBox\PaymentGatewayInterface;
+use Leeto\CashBox\Exceptions\PaymentNotificationException;
+use Leeto\CashBox\PaymentGatewayInterface;
+
 use YooKassa\Client;
 use YooKassa\Model\Notification\NotificationSucceeded;
 use YooKassa\Model\Notification\NotificationWaitingForCapture;
@@ -35,7 +36,7 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
                     "value" => $this->getAmount(),
                     "currency" => config("cashbox.gateway.currency") ?? 'RUB'
                 ],
-                "vat_code" => config("cashbox.gateway.vat_code"),
+                "vat_code" => config("cashbox.gateway.vat_code") ?? 1,
                 "description" => $this->getPaymentDescription(),
                 'payment_subject' => config("cashbox.gateway.payment_subject") ?? 'intellectual_activity',
                 'payment_mode' => config("cashbox.gateway.payment_mode") ?? 'full_payment',
@@ -59,7 +60,7 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
             'description' => $this->getPaymentDescription(),
             'receipt' => [
                 'items' => $this->getReceiptItems(),
-                'tax_system_code' => config("cashbox.gateway.tax_system_code"),
+                'tax_system_code' => config("cashbox.gateway.tax_system_code") ?? 1,
                 'email' => config("cashbox.gateway.email"),
             ],
             "metadata" => $this->getParams()

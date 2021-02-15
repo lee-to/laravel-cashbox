@@ -1,6 +1,6 @@
 <?php
 
-namespace App\CashBox;
+namespace Leeto\CashBox;
 
 interface PaymentNotificationInterface
 {

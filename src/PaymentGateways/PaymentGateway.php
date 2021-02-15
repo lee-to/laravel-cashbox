@@ -1,10 +1,10 @@
 <?php
 
 
-namespace App\CashBox\PaymentGateways;
+namespace Leeto\CashBox\PaymentGateways;
 
-use App\Models\CashBoxRequest;
-use App\CashBox\PaymentNotifications\PaymentNotificationFactory;
+use Leeto\Models\CashBoxRequest;
+use Leeto\CashBox\PaymentNotifications\PaymentNotificationFactory;
 
 class PaymentGateway
 {

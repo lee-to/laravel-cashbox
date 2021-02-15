@@ -2,13 +2,13 @@
 
 return [
     "gateway" => [
-        "class" => \App\CashBox\PaymentGateways\YooKassa::class,
+        "class" => Leeto\CashBox\PaymentGateways\YooKassa::class,
         "credentials" => [
             "id" => env("CASHBOX_AUTH_ID", null),
             "key" => env("CASHBOX_AUTH_KEY", null),
         ],
         "currency" => "RUB",
-        "email" => ""
+        "email" => "invoices@company.com"
     ],
     "notify" => [
         "default" => "telegram",

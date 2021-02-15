@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\CashBox\PaymentNotifications;
+namespace Leeto\CashBox\PaymentNotifications;
 
 
 class PaymentNotification

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\CashBox\Exceptions;
+namespace Leeto\CashBox\Exceptions;
 
 use Exception;
 

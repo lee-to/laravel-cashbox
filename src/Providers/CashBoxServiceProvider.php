@@ -1,8 +1,8 @@
 <?php
 
-namespace App\CashBox\Providers;
+namespace Leeto\CashBox\Providers;
 
-use App\CashBox\CashBox;
+use Leeto\CashBox\CashBox;
 use Illuminate\Support\ServiceProvider;
 
 class CashBoxServiceProvider extends ServiceProvider
