@@ -3,7 +3,7 @@
 
 namespace Leeto\CashBox\PaymentGateways;
 
-use Leeto\Models\CashBoxRequest;
+use Leeto\CashBox\Models\CashBoxRequest;
 use Leeto\CashBox\PaymentNotifications\PaymentNotificationFactory;
 
 class PaymentGateway
