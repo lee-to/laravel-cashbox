@@ -10,22 +10,38 @@ use YooKassa\Model\Notification\NotificationSucceeded;
 use YooKassa\Model\Notification\NotificationWaitingForCapture;
 use YooKassa\Model\NotificationEventType;
 
+/**
+ * Class YooKassa
+ * @package Leeto\CashBox\PaymentGateways
+ */
 class YooKassa extends PaymentGateway implements PaymentGatewayInterface
 {
+    /**
+     * YooKassa constructor.
+     */
     public function __construct()
     {
         $this->setClient(new Client());
     }
 
+    /**
+     * @param array $params
+     */
     public function credentials($params = []) {
         $this->getClient()->setAuth($params["id"], $params["key"]);
     }
 
-    protected function getRequest() {
+    /**
+     * @return mixed
+     */
+    public function getRequest() {
         return json_decode(file_get_contents('php://input'), true);
     }
 
-    protected function getReceiptItems(): array
+    /**
+     * @return array
+     */
+    public function getReceiptItems(): array
     {
         $receiptItems = parent::getReceiptItems();
 
@@ -46,9 +62,12 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
         return $receiptItems;
     }
 
-    protected function getPaymentData(): array
+    /**
+     * @return array
+     */
+    public function getPaymentData(): array
     {
-        return [
+        $data = [
             'amount' => [
                 'value' => $this->getAmount(),
                 'currency' => config("cashbox.gateway.currency") ?? 'RUB'
@@ -63,10 +82,26 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
                 'tax_system_code' => config("cashbox.gateway.tax_system_code") ?? 1,
                 'email' => config("cashbox.gateway.email"),
             ],
-            "metadata" => $this->getParams()
+            "metadata" => $this->getParams(),
+            "save_payment_method" => true,
         ];
+
+        if($this->isRecurringPayments() && $this->getPaymentToken()) {
+            $data["payment_method_id"] = $this->getPaymentToken();
+        }
+
+        if($this->isSaveBankCard()) {
+            $data["save_payment_method"] = true;
+            $data["payment_method_data"]["type"] = "bank_card";
+        }
+
+        return $data;
     }
 
+    /**
+     * @return \YooKassa\Model\Payment|\YooKassa\Model\PaymentInterface|\YooKassa\Request\Payments\PaymentResponse
+     * @throws PaymentNotificationException
+     */
     public function getPaymentObject() {
         $request = $this->getRequest();
 
@@ -87,7 +122,10 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
         return $notification->getObject();
     }
 
-    public function createPayment()
+    /**
+     * @return string
+     */
+    public function createPayment() : string
     {
         $this->logger("create", $this->getPaymentData());
 
@@ -98,12 +136,23 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
         return $response->getConfirmation()->getConfirmationUrl();
     }
 
-    public function capturePayment(callable $callback)
+    /**
+     * @param callable $callback
+     * @return array
+     * @throws PaymentNotificationException
+     */
+    public function capturePayment(callable $callback) : array
     {
         $payment = $this->getPaymentObject();
 
         if ($payment->getPaid()) {
             $params = $payment->getMetadata()->toArray();
+
+            if ($payment->getPaymentMethod()->getSaved()) {
+                $this->setSavedBankCard($payment->getPaymentMethod()->jsonSerialize());
+                $this->setSaveBankCard(true);
+                $this->setPaymentToken($payment->getPaymentMethod()->getId());
+            }
 
             $amount = $this->amountFormat($payment->getAmount()->getValue());
 
@@ -111,23 +160,25 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
             $this->setPaymentDescription($payment->getDescription());
             $this->setParams($params);
 
-            if(is_callable($callback)) {
-                $callback();
-            }
-
-            $this->notify(config("cashbox.notify.new_payment_message") . $this->getDefaultNotifyMessage());
+            $this->captureCallable($callback, $params);
 
             return $this->getClient()->capturePayment($this->getPaymentData(), $payment->getId(), $this->getIdempotent());
         }
 
-        return false;
+        return [];
     }
 
+    /**
+     *
+     */
     public function cancelPayment()
     {
 
     }
 
+    /**
+     *
+     */
     public function createRefund()
     {
 

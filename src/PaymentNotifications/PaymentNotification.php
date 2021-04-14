@@ -4,8 +4,15 @@
 namespace Leeto\CashBox\PaymentNotifications;
 
 
+/**
+ * Class PaymentNotification
+ * @package Leeto\CashBox\PaymentNotifications
+ */
 class PaymentNotification
 {
+    /**
+     * @var
+     */
     protected $client;
 
     /**

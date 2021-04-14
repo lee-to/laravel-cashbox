@@ -5,8 +5,15 @@ namespace Leeto\CashBox\Providers;
 use Leeto\CashBox\CashBox;
 use Illuminate\Support\ServiceProvider;
 
+/**
+ * Class CashBoxServiceProvider
+ * @package Leeto\CashBox\Providers
+ */
 class CashBoxServiceProvider extends ServiceProvider
 {
+    /**
+     * @var string
+     */
     protected $namespace = "cashbox";
 
     /**

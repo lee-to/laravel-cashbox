@@ -5,12 +5,23 @@ namespace Leeto\CashBox\PaymentNotifications;
 
 use Leeto\CashBox\PaymentNotificationInterface;
 
+/**
+ * Class PaymentNotificationFactory
+ * @package Leeto\CashBox\PaymentNotifications
+ */
 class PaymentNotificationFactory
 {
+    /**
+     * PaymentNotificationFactory constructor.
+     */
     private function __construct() {
 
     }
 
+    /**
+     * @param $handler
+     * @return PaymentNotificationInterface|Telegram
+     */
     public static function make($handler)
     {
         if ($handler instanceof PaymentNotificationInterface) {

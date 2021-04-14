@@ -8,7 +8,8 @@
 - configure config/cashbox.php
 
 ### Available payment gateways
-- YooKassa
+- YooKassa (config/cashbox.php credentials - id(shopId), key(shopPassword))
+- KassaCom (config/cashbox.php credentials - login, secret, key(api-key))
 
 ### Usage
 
@@ -28,7 +29,7 @@ return redirect(app("payment")->createPayment());
 ##### Capture payment
 
 ```php
-return response()->json(app("payment")->capturePayment(function () {
+return response()->json(app("payment")->capturePayment(function ($paymentParams, $paymentToken, $bankCard) {
     
 }));
 ```
