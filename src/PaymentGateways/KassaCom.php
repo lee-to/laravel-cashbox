@@ -132,7 +132,7 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
     {
         $request = $this->getRequest();
 
-        $this->logger($request->getStatus(), (array) $request->getOrder());
+        $this->logger($request->getStatus(), (array) $request);
 
         return $request;
     }
@@ -165,7 +165,7 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
             if($payment->getNotificationType() == NotificationTypes::TYPE_PAY && $payment->getStatus() == PaymentStatuses::STATUS_SUCCESSFUL) {
 
                 if ($payment->getToken() && $payment->getPaymentMethod()->getCard()) {
-                    $this->setSavedBankCard($payment->getPaymentMethod()->getCard());
+                    $this->setSavedBankCard((array) $payment->getPaymentMethod()->getCard());
                     $this->setSaveBankCard(true);
                     $this->setPaymentToken($payment->getToken());
                 }
