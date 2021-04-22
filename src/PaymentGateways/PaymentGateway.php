@@ -33,9 +33,9 @@ class PaymentGateway
     protected $returnUrl;
 
     /**
-     * @var
+     * @var string
      */
-    protected $paymentDescription;
+    protected $paymentDescription = "";
 
     /**
      * @var array
@@ -264,7 +264,7 @@ class PaymentGateway
      */
     protected function getDefaultNotifyMessage(): string
     {
-        return trim("{$this->getNotifyCustomText()} {$this->getPaymentDescription()} - {$this->getAmount()} " . config("cashbox.gateway.currency"));
+        return trim("{$this->getNotifyCustomText()} {$this->getPaymentDescription()} " . config("cashbox.gateway.currency"));
     }
 
     /**
