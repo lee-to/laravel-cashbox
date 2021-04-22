@@ -280,7 +280,7 @@ class PaymentGateway
     /**
      *
      */
-    protected function tryNotify() {
+    public function tryNotify() {
         if(config("cashbox.notify.try_payment_message")) {
             $this->notify(config("cashbox.notify.try_payment_message") . $this->getDefaultNotifyMessage());
         }
@@ -289,7 +289,7 @@ class PaymentGateway
     /**
      *
      */
-    protected function captureNotify() {
+    public function captureNotify() {
         if(config("cashbox.notify.new_payment_message")) {
             $this->notify(config("cashbox.notify.new_payment_message") . $this->getDefaultNotifyMessage());
         }
