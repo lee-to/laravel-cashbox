@@ -129,7 +129,7 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
     {
         $this->logger("create", $this->getPaymentData());
 
-        $this->notify(config("cashbox.notify.try_payment_message") . $this->getDefaultNotifyMessage());
+        $this->tryNotify();
 
         $response = $this->getClient()->createPayment($this->getPaymentData(), $this->getIdempotent());
 
@@ -161,6 +161,7 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
             $this->setParams($params);
 
             $this->captureCallable($callback, $params);
+            $this->captureNotify();
 
             return $this->getClient()->capturePayment($this->getPaymentData(), $payment->getId(), $this->getIdempotent());
         }

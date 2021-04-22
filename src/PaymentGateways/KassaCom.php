@@ -144,7 +144,7 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
     {
         $this->logger("create", $this->getPaymentData());
 
-        $this->notify(config("cashbox.notify.try_payment_message") . $this->getDefaultNotifyMessage());
+        $this->tryNotify();
 
         $response = $this->getClient()->createPayment($this->getPaymentData());
 
@@ -171,6 +171,7 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
                 }
 
                 $this->captureCallable($callback, $payment->getCustomParameters());
+                $this->captureNotify();
             }
         } catch (\Exception $e) {
             return [

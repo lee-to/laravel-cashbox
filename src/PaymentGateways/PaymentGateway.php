@@ -64,6 +64,9 @@ class PaymentGateway
      */
     protected $saveBankCard = false;
 
+
+    protected $notifyCustomText = "";
+
     /**
      * @return mixed
      */
@@ -226,6 +229,22 @@ class PaymentGateway
     /**
      * @return string
      */
+    public function getNotifyCustomText(): string
+    {
+        return $this->notifyCustomText;
+    }
+
+    /**
+     * @param string $notifyCustomText
+     */
+    public function setNotifyCustomText(string $notifyCustomText): void
+    {
+        $this->notifyCustomText = $notifyCustomText;
+    }
+
+    /**
+     * @return string
+     */
     protected function getIdempotent(): string
     {
         return sha1("idemp" . uniqid("", true));
@@ -245,7 +264,7 @@ class PaymentGateway
      */
     protected function getDefaultNotifyMessage(): string
     {
-        return "{$this->getPaymentDescription()} - {$this->getAmount()} " . config("cashbox.gateway.currency");
+        return trim("{$this->getNotifyCustomText()} {$this->getPaymentDescription()} - {$this->getAmount()} " . config("cashbox.gateway.currency"));
     }
 
     /**
@@ -261,8 +280,19 @@ class PaymentGateway
     /**
      *
      */
+    protected function tryNotify() {
+        if(config("cashbox.notify.try_payment_message")) {
+            $this->notify(config("cashbox.notify.try_payment_message") . $this->getDefaultNotifyMessage());
+        }
+    }
+    
+    /**
+     *
+     */
     protected function captureNotify() {
-        $this->notify(config("cashbox.notify.new_payment_message") . $this->getDefaultNotifyMessage());
+        if(config("cashbox.notify.new_payment_message")) {
+            $this->notify(config("cashbox.notify.new_payment_message") . $this->getDefaultNotifyMessage());
+        }
     }
 
     /**
