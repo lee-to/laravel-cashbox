@@ -264,7 +264,7 @@ class PaymentGateway
      */
     protected function getDefaultNotifyMessage(): string
     {
-        return trim("{$this->getNotifyCustomText()} {$this->getPaymentDescription()} " . config("cashbox.gateway.currency"));
+        return trim("{$this->getNotifyCustomText()} {$this->getPaymentDescription()}");
     }
 
     /**
