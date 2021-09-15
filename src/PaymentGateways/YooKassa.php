@@ -83,7 +83,6 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
                 'email' => config("cashbox.gateway.email"),
             ],
             "metadata" => $this->getParams(),
-            "save_payment_method" => true,
         ];
 
         if($this->isRecurringPayments() && $this->getPaymentToken()) {
