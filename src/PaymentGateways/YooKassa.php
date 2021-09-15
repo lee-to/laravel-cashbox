@@ -160,8 +160,11 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
             $this->setParams($params);
 
             $this->captureCallable($callback, $params);
+            $this->captureNotify();
 
-            return $this->getClient()->capturePayment($this->getPaymentData(), $payment->getId(), $this->getIdempotent());
+            return $this->getClient()
+                ->capturePayment($this->getPaymentData(), $payment->getId(), $this->getIdempotent())
+                ->toArray();
         }
 
         return [];

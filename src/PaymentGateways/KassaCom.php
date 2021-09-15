@@ -171,6 +171,7 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
                 }
 
                 $this->captureCallable($callback, $payment->getCustomParameters());
+                $this->captureNotify();
             }
         } catch (\Exception $e) {
             return [
