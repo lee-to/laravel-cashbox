@@ -3,6 +3,7 @@
 
 namespace Leeto\CashBox\PaymentNotifications;
 
+use InvalidArgumentException;
 use Leeto\CashBox\PaymentNotificationInterface;
 
 /**
@@ -14,7 +15,8 @@ class PaymentNotificationFactory
     /**
      * PaymentNotificationFactory constructor.
      */
-    private function __construct() {
+    private function __construct()
+    {
 
     }
 
@@ -32,6 +34,6 @@ class PaymentNotificationFactory
             return new Telegram();
         }
 
-        throw new \InvalidArgumentException('The cashbox notification handler must be set to "telegram" or an instance of PaymentNotificationInterface');
+        throw new InvalidArgumentException('The cashbox notification handler must be set to "telegram" or an instance of PaymentNotificationInterface');
     }
 }

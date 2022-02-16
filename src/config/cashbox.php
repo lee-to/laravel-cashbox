@@ -4,8 +4,8 @@ return [
     "gateway" => [
         "class" => Leeto\CashBox\PaymentGateways\YooKassa::class,
         "credentials" => [
-            "id" => env("CASHBOX_AUTH_ID", null),
-            "key" => env("CASHBOX_AUTH_KEY", null),
+            "id" => env("CASHBOX_AUTH_ID"),
+            "key" => env("CASHBOX_AUTH_KEY"),
         ],
         "currency" => "RUB",
         "email" => "invoices@company.com"

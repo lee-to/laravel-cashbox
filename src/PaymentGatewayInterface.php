@@ -14,7 +14,7 @@ interface PaymentGatewayInterface
      * @param array $params
      * @return mixed
      */
-    public function credentials($params = []);
+    public function credentials(array $params = []);
 
     /**
      * @return mixed

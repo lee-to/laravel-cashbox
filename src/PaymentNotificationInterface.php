@@ -10,7 +10,7 @@ interface PaymentNotificationInterface
 {
     /**
      * @param string $message
-     * @return mixed
+     * @return bool
      */
-    public function send(string $message);
+    public function send(string $message): bool;
 }

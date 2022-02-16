@@ -5,6 +5,8 @@
 
 - php artisan vendor:publish --provider="Leeto\CashBox\Providers\CashBoxServiceProvider"
 
+- php artisan cashbox:install
+
 - configure config/cashbox.php
 
 ### Available payment gateways
@@ -33,3 +35,6 @@ return response()->json(app("payment")->capturePayment(function ($paymentParams,
     
 }));
 ```
+
+##### Tests
+- vendor/bin/phpunit tests

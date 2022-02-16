@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+
+class {{ class }} extends Controller
+{
+    public function index(Request $request): RedirectResponse
+    {
+        app('payment')->setPaymentDescription('Payment description');
+        app('payment')->setReturnUrl(route('purchase.success'));
+        app('payment')->setAmount(100);
+        app('payment')->setParams([
+            'user_id' => auth()->id,
+        ]);
+
+        return redirect(app('payment')->createPayment());
+    }
+
+    public function check(): JsonResponse
+    {
+        return response()->json(app('payment')->capturePayment(
+            function ($paymentParams, $paymentToken, $bankCard) {
+                $user = User::query()
+                            ->findOrFail($paymentParams['user_id']);
+            }
+        ));
+    }
+
+    public function success(): RedirectResponse
+    {
+        return redirect('/');
+    }
+}

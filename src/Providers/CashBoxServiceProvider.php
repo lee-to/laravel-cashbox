@@ -4,6 +4,7 @@ namespace Leeto\CashBox\Providers;
 
 use Leeto\CashBox\CashBox;
 use Illuminate\Support\ServiceProvider;
+use Leeto\CashBox\commands\InstallCommand;
 
 /**
  * Class CashBoxServiceProvider
@@ -44,5 +45,12 @@ class CashBoxServiceProvider extends ServiceProvider
 
         /* Migrations */
         $this->loadMigrationsFrom($path . '/database/migrations');
+
+        /* Commands */
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                InstallCommand::class,
+            ]);
+        }
     }
 }

@@ -2,8 +2,13 @@
 
 namespace Leeto\CashBox\PaymentGateways;
 
+use Exception;
+use InvalidArgumentException;
+use KassaCom\SDK\Exception\Notification\EmptyApiKeyException;
+use KassaCom\SDK\Exception\Notification\NotificationSecurityException;
 use KassaCom\SDK\Model\NotificationTypes;
 use KassaCom\SDK\Model\PaymentStatuses;
+use KassaCom\SDK\Model\Request\NotificationRequest;
 use KassaCom\SDK\Notification;
 use Leeto\CashBox\PaymentGatewayInterface;
 
@@ -40,7 +45,7 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
     /**
      * @param Notification $notification
      */
-    protected function setNotification($notification): void
+    protected function setNotification(Notification $notification): void
     {
         $this->notification = $notification;
     }
@@ -48,17 +53,17 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
     /**
      * @param array $params
      */
-    public function credentials($params = []) {
+    public function credentials(array $params = []) {
         $this->getClient()->setAuth($params["login"], $params["secret"]);
         $this->getNotification()->setApiKey($params["key"]);
     }
 
     /**
-     * @return \KassaCom\SDK\Model\Request\NotificationRequest
-     * @throws \KassaCom\SDK\Exception\Notification\EmptyApiKeyException
-     * @throws \KassaCom\SDK\Exception\Notification\NotificationSecurityException
+     * @return NotificationRequest
+     * @throws EmptyApiKeyException
+     * @throws NotificationSecurityException
      */
-    public function getRequest(): \KassaCom\SDK\Model\Request\NotificationRequest
+    public function getRequest(): NotificationRequest
     {
         return $this->getNotification()->process(false);
     }
@@ -91,7 +96,7 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
         $params = $this->getParams();
 
         if(!isset($params["email"])) {
-            throw new \InvalidArgumentException("Customer Email is required");
+            throw new InvalidArgumentException("Customer Email is required");
         }
 
         $data = [
@@ -124,11 +129,11 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
     }
 
     /**
-     * @return \KassaCom\SDK\Model\Request\NotificationRequest
-     * @throws \KassaCom\SDK\Exception\Notification\EmptyApiKeyException
-     * @throws \KassaCom\SDK\Exception\Notification\NotificationSecurityException
+     * @return NotificationRequest
+     * @throws EmptyApiKeyException
+     * @throws NotificationSecurityException
      */
-    public function getPaymentObject(): \KassaCom\SDK\Model\Request\NotificationRequest
+    public function getPaymentObject(): NotificationRequest
     {
         $request = $this->getRequest();
 
@@ -154,13 +159,12 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
     /**
      * @param callable $callback
      * @return string[]
-     * @throws \KassaCom\SDK\Exception\Notification\EmptyApiKeyException
-     * @throws \KassaCom\SDK\Exception\Notification\NotificationSecurityException
      */
     public function capturePayment(callable $callback) : array
     {
         try {
             $payment = $this->getPaymentObject();
+            $params = $payment->getCustomParameters();
 
             if($payment->getNotificationType() == NotificationTypes::TYPE_PAY && $payment->getStatus() == PaymentStatuses::STATUS_SUCCESSFUL) {
 
@@ -170,10 +174,16 @@ class KassaCom extends PaymentGateway implements PaymentGatewayInterface
                     $this->setPaymentToken($payment->getToken());
                 }
 
-                $this->captureCallable($callback, $payment->getCustomParameters());
+                $amount = $this->amountFormat($payment->getOrder()->getAmount());
+
+                $this->setAmount($amount);
+                $this->setPaymentDescription($payment->getOrder()->getDescription());
+                $this->setParams($params);
+
+                $this->captureCallable($callback, $params);
                 $this->captureNotify();
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return [
                 "status" => "error",
                 "message" => $e->getMessage(),

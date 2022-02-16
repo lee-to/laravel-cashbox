@@ -9,6 +9,9 @@ use YooKassa\Client;
 use YooKassa\Model\Notification\NotificationSucceeded;
 use YooKassa\Model\Notification\NotificationWaitingForCapture;
 use YooKassa\Model\NotificationEventType;
+use YooKassa\Model\Payment;
+use YooKassa\Model\PaymentInterface;
+use YooKassa\Request\Payments\PaymentResponse;
 
 /**
  * Class YooKassa
@@ -27,14 +30,16 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
     /**
      * @param array $params
      */
-    public function credentials($params = []) {
+    public function credentials(array $params = [])
+    {
         $this->getClient()->setAuth($params["id"], $params["key"]);
     }
 
     /**
      * @return mixed
      */
-    public function getRequest() {
+    public function getRequest()
+    {
         return json_decode(file_get_contents('php://input'), true);
     }
 
@@ -98,10 +103,11 @@ class YooKassa extends PaymentGateway implements PaymentGatewayInterface
     }
 
     /**
-     * @return \YooKassa\Model\Payment|\YooKassa\Model\PaymentInterface|\YooKassa\Request\Payments\PaymentResponse
+     * @return Payment|PaymentInterface|PaymentResponse
      * @throws PaymentNotificationException
      */
-    public function getPaymentObject() {
+    public function getPaymentObject()
+    {
         $request = $this->getRequest();
 
         if(is_null($request)) {

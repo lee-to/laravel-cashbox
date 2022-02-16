@@ -22,14 +22,16 @@ class Telegram extends PaymentNotification implements PaymentNotificationInterfa
 
     /**
      * @param string $message
-     * @return false
+     * @return bool
      */
-    public function send(string $message)
+    public function send(string $message): bool
     {
         if(!config("cashbox.notify.telegram.chat_id")) {
             return false;
         }
 
-        return $this->getClient() ? $this->getClient()->sendMessage(config("cashbox.notify.telegram.chat_id"), $message) : false;
+        return $this->getClient()
+            ? $this->getClient()->sendMessage(config("cashbox.notify.telegram.chat_id"), $message)
+            : false;
     }
 }

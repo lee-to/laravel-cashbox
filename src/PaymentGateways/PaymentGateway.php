@@ -67,6 +67,8 @@ class PaymentGateway
 
     protected $notifyCustomText = "";
 
+    protected $logRequests = false;
+
     /**
      * @return mixed
      */
@@ -243,6 +245,23 @@ class PaymentGateway
     }
 
     /**
+     * @return bool
+     */
+    public function isLogRequests(): bool
+    {
+        return $this->logRequests;
+    }
+
+    /**
+     * @param bool $logRequests
+     */
+    public function setLogRequests(bool $logRequests): void
+    {
+        $this->logRequests = $logRequests;
+    }
+
+
+    /**
      * @return string
      */
     protected function getIdempotent(): string
@@ -264,14 +283,15 @@ class PaymentGateway
      */
     protected function getDefaultNotifyMessage(): string
     {
-        return trim("{$this->getNotifyCustomText()} {$this->getPaymentDescription()}");
+        return trim(": {$this->getNotifyCustomText()} {$this->getPaymentDescription()}");
     }
 
     /**
      * @param $callback
      * @param array $params
      */
-    protected function captureCallable($callback, array $params) {
+    protected function captureCallable($callback, array $params)
+    {
         if(is_callable($callback)) {
             $callback($params, $this->getPaymentToken(), $this->getSavedBankCard());
         }
@@ -280,16 +300,18 @@ class PaymentGateway
     /**
      *
      */
-    public function tryNotify() {
+    public function tryNotify()
+    {
         if(config("cashbox.notify.try_payment_message")) {
             $this->notify(config("cashbox.notify.try_payment_message") . $this->getDefaultNotifyMessage());
         }
     }
-    
+
     /**
      *
      */
-    public function captureNotify() {
+    public function captureNotify()
+    {
         if(config("cashbox.notify.new_payment_message")) {
             $this->notify(config("cashbox.notify.new_payment_message") . $this->getDefaultNotifyMessage());
         }
@@ -300,18 +322,28 @@ class PaymentGateway
      * @param array $params
      * @return mixed
      */
-    protected function logger(string $event, array $params) {
-        return CashBoxRequest::create([
+    protected function logger(string $event, array $params)
+    {
+        return $this->isLogRequests() ? CashBoxRequest::create([
             "request_event_type" => $event,
             "request_data" => $params
-        ]);
+        ]) : false;
     }
 
     /**
      * @param string $message
      * @return false
      */
-    protected function notify(string $message) {
+    protected function notify(string $message): bool
+    {
+        if(!empty($this->getParams())) {
+            $keys = array_map(function ($key) {
+                return "{" . $key . "}";
+            }, array_keys($this->getParams()));
+
+            $message = str_replace($keys, array_values($this->getParams()), $message);
+        }
+
         return PaymentNotificationFactory::make(config("cashbox.notify.default"))->send($message);
     }
 }
