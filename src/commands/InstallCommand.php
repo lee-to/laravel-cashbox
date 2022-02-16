@@ -44,10 +44,13 @@ class InstallCommand extends Command
         if ($this->confirm('Create purchase controller?')) {
             $class = $this->ask('Type controller name');
 
-            $stub = Str::of(file_get_contents(__DIR__ . '../stubs/controller.stub'))
+            $stub = Str::of(file_get_contents(__DIR__ . '/../stubs/controller.stub'))
                 ->replace('{{ class }}', $class);
 
-            file_put_contents(app_path("\Http\Controllers\\$class.php"), $stub);
+            $this->laravel['files']->put(
+                app_path("/Http/Controllers/$class.php"),
+                $stub
+            );
 
             $this->info('Add to routes');
             $this->info("Route::post('/', [App\Http\Controllers\\$class::class, 'index'])");
